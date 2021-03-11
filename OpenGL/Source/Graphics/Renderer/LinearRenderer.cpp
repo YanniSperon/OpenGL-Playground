@@ -21,44 +21,36 @@ void LinearRenderer::Flush(int width, int height, Camera* camera)
 
 	while (!m_OpaqueQueue.empty()) {
 		Object* renderable = m_OpaqueQueue.front();
-		renderable->Bind();
+		if (renderable->GetIsEnabled()) {
+			renderable->Bind();
 
-		renderable->GetMaterial().GetShader().SetMat4("u_M", renderable->GetFinalTransformationMatrix());
-		renderable->GetMaterial().GetShader().SetMat4("u_V", view);
-		renderable->GetMaterial().GetShader().SetMat4("u_P", projection);
+			renderable->GetMaterial().GetShader().SetMat4("u_M", renderable->GetFinalTransformationMatrix());
+			renderable->GetMaterial().GetShader().SetMat4("u_V", view);
+			renderable->GetMaterial().GetShader().SetMat4("u_P", projection);
 
-		renderable->GetMaterial().GetShader().SetVec3("u_CamPos", cameraPosition);
+			renderable->GetMaterial().GetShader().SetVec3("u_CamPos", cameraPosition);
 
-		renderable->GetMesh().Draw();
+			renderable->GetMesh().Draw();
+		}
 		m_OpaqueQueue.pop_front();
 	}
 
-	struct SortingKey
-	{
-		glm::vec3 m_CamPos;
-		SortingKey(glm::vec3 camPos)
-			: m_CamPos(camPos)
-		{
-
-		}
-		inline bool operator() (Object* obj1, Object* obj2)
-		{
-			return glm::length2(m_CamPos - obj1->GetTranslation()) < glm::length2(m_CamPos - obj2->GetTranslation());
-		}
-	};
-
-	std::sort(m_TranslucentQueue.begin(), m_TranslucentQueue.end(), SortingKey(cameraPosition));
+	std::sort(m_TranslucentQueue.begin(), m_TranslucentQueue.end(), [&cameraPosition](Object* obj1, Object* obj2) {
+		return glm::length2(cameraPosition - obj1->GetTranslation()) < glm::length2(cameraPosition - obj2->GetTranslation());
+	});
 	while (!m_TranslucentQueue.empty()) {
 		Object* renderable = m_TranslucentQueue.front();
-		renderable->Bind();
+		if (renderable->GetIsEnabled()) {
+			renderable->Bind();
 
-		renderable->GetMaterial().GetShader().SetMat4("u_M", renderable->GetFinalTransformationMatrix());
-		renderable->GetMaterial().GetShader().SetMat4("u_V", view);
-		renderable->GetMaterial().GetShader().SetMat4("u_P", projection);
+			renderable->GetMaterial().GetShader().SetMat4("u_M", renderable->GetFinalTransformationMatrix());
+			renderable->GetMaterial().GetShader().SetMat4("u_V", view);
+			renderable->GetMaterial().GetShader().SetMat4("u_P", projection);
 
-		renderable->GetMaterial().GetShader().SetVec3("u_CamPos", cameraPosition);
+			renderable->GetMaterial().GetShader().SetVec3("u_CamPos", cameraPosition);
 
-		renderable->GetMesh().Draw();
+			renderable->GetMesh().Draw();
+		}
 		m_TranslucentQueue.pop_front();
 	}
 }

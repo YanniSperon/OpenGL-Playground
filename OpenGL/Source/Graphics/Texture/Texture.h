@@ -3,6 +3,9 @@
 #include <glew.h>
 #include <string>
 
+#define TEXTURE_FILE_EXTENSION ".png"
+#define TEXTURE_HDR_EXTENSION ".hdr"
+
 class Texture {
 private:
 	GLuint m_ID;
@@ -16,6 +19,7 @@ public:
 	~Texture();
 
 	void LoadTexture(const std::string& name);
+	void LoadHDR(const std::string& name);
 
 	void Bind(int slot);
 

@@ -23,6 +23,8 @@ private:
 
 	bool m_IsTranslucent;
 
+	bool m_IsEnabled;
+
 	glm::mat4 m_FinalTransformation;
 
 public:
@@ -36,6 +38,7 @@ public:
 	glm::vec3& GetRotationRef();
 	glm::vec3& GetScaleRef();
 	bool GetIsTranslucent();
+	bool GetIsEnabled();
 
 	Mesh3D& GetMesh();
 	Material& GetMaterial();
@@ -46,6 +49,7 @@ public:
 	void SetRotation(const glm::vec3& rotation);
 	void SetScale(const glm::vec3& scale);
 	void SetIsTranslucent(bool isTranslucent);
+	void SetIsEnabled(bool isEnabled);
 
 	void AddTranslation(const glm::vec3& translation);
 	void AddRotation(const glm::vec3& rotation);

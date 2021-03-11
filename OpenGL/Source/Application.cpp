@@ -8,6 +8,9 @@
 #include "Light.h"
 #include "Random.h"
 
+#include "Vendor/imgui/imgui.h"
+#include "Vendor/imgui/Edited/ImGuiOpenGLRenderer.h"
+
 #include <vector>
 #include <string>
 
@@ -28,11 +31,12 @@ static void GLAPIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint
 		Console::Info("GL NOTIFICATION:%s type = 0x%x, severity = 0x%x, message = %s\n", (type == GL_DEBUG_TYPE_ERROR ? " ** GL ERROR **" : ""), type, severity, message);
 		break;
 	}
-	assert(false);
 }
 
 static double mouseXPos = 0.0;
 static double mouseYPos = 0.0;
+
+static double mouseSensitivity = 0.5;
 
 static int windowWidth = 1920;
 static int windowHeight = 1080;
@@ -40,7 +44,7 @@ static int windowHeight = 1080;
 static bool didMove = false;
 
 int main() {
-
+	/*
 	Global::Initialize();
 
 	Console::Assert(glfwInit(), "Failed GLFW Initialization!");
@@ -162,13 +166,13 @@ int main() {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 
-	GLuint VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	//GLuint VAO;
+	//glGenVertexArrays(1, &VAO);
+	//glBindVertexArray(VAO);
 
 
-	Shader shader("Resources/Shaders/Lerp", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER);
-	shader.Bind();
+	//Shader shader("Resources/Shaders/Lerp", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER);
+	//shader.Bind();
 
 
 
@@ -192,20 +196,20 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-		shader.Bind();
-		shader.Set3Float("controlPoints[0]", -1.0, -1.0, 0.0);
-		shader.Set3Float("controlPoints[1]", -0.75, -0.25, 0.0);
-		shader.Set3Float("controlPoints[2]", -1.0, -2.0, 0.0);
-		shader.Set3Float("controlPoints[3]", +1.0, +1.0, 0.0);
-		shader.Set3Float("controlPoints[4]", +1.0, +1.0, 0.0);
-		shader.Set3Float("controlPoints[5]", +1.0, +1.0, 0.0);
-		shader.Set3Float("controlPoints[6]", +1.0, +1.0, 0.0);
-		shader.Set3Float("controlPoints[7]", +1.0, +1.0, 0.0);
-		glBindVertexArray(VAO);
-
-		glPointSize(10);
-		glLineWidth(10);
-		glDrawArrays(GL_LINES, 0, 200);
+		//shader.Bind();
+		//shader.Set3Float("controlPoints[0]", -1.0, -1.0, 0.0);
+		//shader.Set3Float("controlPoints[1]", -0.75, -0.25, 0.0);
+		//shader.Set3Float("controlPoints[2]", -1.0, -2.0, 0.0);
+		//shader.Set3Float("controlPoints[3]", +1.0, +1.0, 0.0);
+		//shader.Set3Float("controlPoints[4]", +1.0, +1.0, 0.0);
+		//shader.Set3Float("controlPoints[5]", +1.0, +1.0, 0.0);
+		//shader.Set3Float("controlPoints[6]", +1.0, +1.0, 0.0);
+		//shader.Set3Float("controlPoints[7]", +1.0, +1.0, 0.0);
+		//glBindVertexArray(VAO);
+		//
+		//glPointSize(10);
+		//glLineWidth(10);
+		//glDrawArrays(GL_LINES, 0, 200);
 
 
 
@@ -224,60 +228,8 @@ int main() {
 	glfwTerminate();
 
 	Global::Cleanup();
+	*/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/*
 	Global::Initialize();
 
 	Console::Assert(glfwInit(), "Failed GLFW Initialization!");
@@ -480,6 +432,10 @@ int main() {
 
 
 
+	GLfloat value, max_anisotropy = 8.0f; /* don't exceed this value...*/
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &value);
+	Console::Warning("Anisotropy value: %f", value);
+
 
 
 	
@@ -488,13 +444,17 @@ int main() {
 	Renderer* renderer = new LinearRenderer();
 
 	std::vector<Object*> objects = std::vector<Object*>();
-	objects.push_back(new Object("Resources/Cube.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Rust/Rust", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false));
+
+	//objects.push_back(new Object("Resources/MassivePlane.obj", "Resources/Shaders/Wocky", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "", MATERIAL_NONE_TEXTURE, false));
+	//objects[0]->SetTranslation(glm::vec3(0.0f, -3.0f, 0.0f));
+	//objects[0]->SetScale(glm::vec3(1000.0f, 1.0f, 1000.0f));
+
+	objects.push_back(new Object("Resources/MassivePlane.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Rust/Rust", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false));
 	objects[0]->SetTranslation(glm::vec3(0.0f, -3.0f, 0.0f));
-	objects[0]->SetScale(glm::vec3(50.0f, 1.0f, 50.0f));
+	objects[0]->SetScale(glm::vec3(1000.0f, 1.0f, 1000.0f));
 
 	Camera* camera = new Camera();
-	camera->SetSkybox("Resources/Skybox/Skybox");
-
+	camera->SetSkybox("Resources/Skybox/Skybox.hdr");
 
 
 
@@ -515,7 +475,6 @@ int main() {
 
 		glfwPollEvents();
 		input->Prepare();
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		
 
@@ -545,7 +504,7 @@ int main() {
 		}
 			
 		if (didMove) {
-			camera->LookAtMouse(0.2f, input->GetMousePositionX(), input->GetMousePositionY(), input->GetOldMousePositionX(), input->GetOldMousePositionY());
+			camera->LookAtMouse(mouseSensitivity, input->GetMousePositionX(), input->GetMousePositionY(), input->GetOldMousePositionX(), input->GetOldMousePositionY());
 		}
 
 
@@ -555,6 +514,7 @@ int main() {
 		for (int i = 0; i < objects.size(); i++) {
 			renderer->AddObject(objects[i]);
 		}
+
 		renderer->Flush(windowWidth, windowHeight, camera);
 
 
@@ -600,5 +560,5 @@ int main() {
 	glfwTerminate();
 
 	Global::Cleanup();
-	*/
+	
 }

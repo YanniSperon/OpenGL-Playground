@@ -7,7 +7,12 @@
 Texture::Texture(const std::string& name)
 	: m_ID(0), m_FakeUser(false), m_Path(name)
 {
-	LoadTexture(name);
+	if (name.find(".hdr") != std::string::npos) {
+		LoadHDR(name);
+	}
+	else {
+		LoadTexture(name);
+	}
 }
 
 Texture::~Texture()
@@ -44,6 +49,7 @@ void Texture::LoadTexture(const std::string& name)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
 
 		stbi_image_free(data);
 	}
@@ -51,6 +57,29 @@ void Texture::LoadTexture(const std::string& name)
 	{
 		stbi_image_free(data);
 		Console::Error("Failed to load texture \"%s\"", name.c_str());
+	}
+}
+
+void Texture::LoadHDR(const std::string& name)
+{
+	stbi_set_flip_vertically_on_load(true);
+	int width, height, nrComponents;
+	float* data = stbi_loadf(name.c_str(), &width, &height, &nrComponents, 0);
+	if (data) {
+		glGenTextures(1, &m_ID);
+		glBindTexture(GL_TEXTURE_2D, m_ID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
+	else {
+		stbi_image_free(data);
+		Console::Error("Failed to load hdr texture \"%s\"", name.c_str());
 	}
 }
 

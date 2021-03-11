@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Shader.h"
+#include "Texture.h"
+#include "Mesh3D.h"
 
 #include "glm.hpp"
 
@@ -10,18 +12,16 @@
 
 class Skybox {
 private:
-	GLuint m_HDRTexture;
+	std::shared_ptr<Texture> m_HDRTexture;
+	std::shared_ptr<Mesh3D> m_CubeMesh;
+	std::shared_ptr<Shader> m_RenderShader;
+	std::shared_ptr<Shader> m_CubemapShader;
+
 	GLuint m_VAO;
 	GLuint m_VBO;
 	GLuint m_FBO;
 	GLuint m_RBO;
 	GLuint m_CubeMap;
-
-	glm::mat4 m_Projection;
-	glm::mat4* m_Views;
-	
-	std::shared_ptr<Shader> m_IBLShader;
-	std::shared_ptr<Shader> m_RenderShader;
 public:
 	Skybox(const std::string& path);
 	~Skybox();

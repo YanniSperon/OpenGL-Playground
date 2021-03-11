@@ -7,7 +7,7 @@
 #include <glm/gtx/euler_angles.hpp>
 
 Object::Object(const std::string& meshPath, std::string shaderPath, int shaderType, std::string texturePath, int textureTypes, bool isDynamic)
-	: m_Mesh(Mesh3DManager::GetInstance()->GetMesh(meshPath, isDynamic)), m_Material(MaterialManager::GetInstance()->GetMaterial(shaderPath, shaderType, texturePath, textureTypes)), m_Translation(0.0f), m_Rotation(0.0f), m_Scale(1.0f), m_IsDynamic(isDynamic), m_FinalTransformation(1.0f), m_IsTranslucent(false)
+	: m_Mesh(Mesh3DManager::GetInstance()->GetMesh(meshPath, isDynamic)), m_Material(MaterialManager::GetInstance()->GetMaterial(shaderPath, shaderType, texturePath, textureTypes)), m_Translation(0.0f), m_Rotation(0.0f), m_Scale(1.0f), m_IsDynamic(isDynamic), m_FinalTransformation(1.0f), m_IsTranslucent(false), m_IsEnabled(true)
 {
 }
 
@@ -52,6 +52,11 @@ bool Object::GetIsTranslucent()
 	return m_IsTranslucent;
 }
 
+bool Object::GetIsEnabled()
+{
+	return m_IsEnabled;
+}
+
 Mesh3D& Object::GetMesh()
 {
 	return *m_Mesh;
@@ -86,6 +91,11 @@ void Object::SetScale(const glm::vec3& scale)
 void Object::SetIsTranslucent(bool isTranslucent)
 {
 	m_IsTranslucent = isTranslucent;
+}
+
+void Object::SetIsEnabled(bool isEnabled)
+{
+	m_IsEnabled = isEnabled;
 }
 
 void Object::AddTranslation(const glm::vec3& translation)
@@ -145,7 +155,7 @@ void Object::SetFinalTransformation(const glm::mat4& transformation)
 
 void Object::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::vec3& translation)
 {
-	if (m_Mesh && m_Material) {
+	if (m_Mesh && m_Material && m_IsEnabled) {
 		m_Material->Bind();
 		m_Mesh->Bind();
 
@@ -159,7 +169,7 @@ void Object::Draw(const glm::mat4& projection, const glm::mat4& view, const glm:
 
 void Object::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& modelOffset)
 {
-	if (m_Mesh && m_Material) {
+	if (m_Mesh && m_Material && m_IsEnabled) {
 		m_Material->Bind();
 		m_Mesh->Bind();
 
@@ -180,5 +190,6 @@ Object* Object::DeepCopy(Object* object)
 	copy->m_Translation = object->m_Translation;
 	copy->m_Rotation = object->m_Rotation;
 	copy->m_Scale = object->m_Scale;
+	copy->m_IsEnabled = object->m_IsEnabled;
 	return copy;
 }

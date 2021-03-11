@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#define MATERIAL_NONE_TEXTURE 0
 #define MATERIAL_ALBEDO_TEXTURE 1
 #define MATERIAL_NORMAL_TEXTURE 2
 #define MATERIAL_METALLIC_TEXTURE 4
@@ -15,6 +16,7 @@
 #define MATERIAL_EMISSIVE_TEXTURE 32
 #define MATERIAL_DISPLACEMENT_TEXTURE 64
 #define MATERIAL_AO_TEXTURE 128
+#define MATERIAL_HDR_TEXTURE 256
 
 class Material {
 private:
@@ -27,13 +29,16 @@ private:
 
 	bool m_FakeUser;
 public:
-	Material(std::string shaderPath, int shaderType, std::string texturePath, int textureTypes);
+	Material(const std::string& shaderPath, int shaderType, const std::string& texturePath, int textureTypes);
 	~Material();
 
 	Shader& GetShader();
 
 	bool GetHasFakeUser();
 	void SetHasFakeUser(bool fakeUser);
+
+	void AddTexture(const std::string& name, int textureTypes);
+	void AddTextures(const std::string& texturePath, int textureTypes);
 
 	int GetTextureTypes();
 	std::string GetTexturePath();
