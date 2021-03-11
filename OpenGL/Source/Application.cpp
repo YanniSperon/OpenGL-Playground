@@ -451,10 +451,10 @@ int main() {
 
 	objects.push_back(new Object("Resources/MassivePlane.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Rust/Rust", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false));
 	objects[0]->SetTranslation(glm::vec3(0.0f, -3.0f, 0.0f));
-	objects[0]->SetScale(glm::vec3(1000.0f, 1.0f, 1000.0f));
+	objects[0]->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 
 	Camera* camera = new Camera();
-	camera->SetSkybox("Resources/Skybox/Skybox.hdr");
+	camera->SetSkybox("Resources/Skybox/Canyon.hdr", 1.6f);
 
 
 

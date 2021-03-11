@@ -11,51 +11,22 @@ layout(binding = 1) uniform sampler2D u_Normal;
 layout(binding = 2) uniform sampler2D u_Metallic;
 layout(binding = 3) uniform sampler2D u_Roughness;
 layout(binding = 4) uniform sampler2D u_AO;
+layout(binding = 5) uniform samplerCube u_Environment;
 
 uniform vec3 u_CamPos;
 
 const vec3 c_LightPosition = vec3(0.0, 0.0, 0.0);
 const vec3 c_LightColor = vec3(300.0, 300.0, 300.0);
 
+#define GAMMA 2.2
+#define MAX_LIGHTS 1
+
+uniform vec3 u_LightPositions[MAX_LIGHTS];
+uniform vec3 u_LightColors[MAX_LIGHTS];
+
 const float c_PI = 3.14159265359;
 
-vec4 hash4( vec2 p ) { return fract(sin(vec4( 1.0+dot(p,vec2(37.0,17.0)), 2.0+dot(p,vec2(11.0,47.0)), 3.0+dot(p,vec2(41.0,29.0)), 4.0+dot(p,vec2(23.0,31.0))))*103.0); }
-
-vec4 textureNoTile(sampler2D samp, in vec2 uv)
-{
-    return texture(samp, uv);
-    //ivec2 iuv = ivec2( floor( uv ) );
-    // vec2 fuv = fract( uv );
-    //
-    //// generate per-tile transform
-    //vec4 ofa = hash4( iuv + ivec2(0,0) );
-    //vec4 ofb = hash4( iuv + ivec2(1,0) );
-    //vec4 ofc = hash4( iuv + ivec2(0,1) );
-    //vec4 ofd = hash4( iuv + ivec2(1,1) );
-    //
-    //vec2 ddx = dFdx( uv );
-    //vec2 ddy = dFdy( uv );
-    //
-    //// transform per-tile uvs
-    //ofa.zw = sign( ofa.zw-0.5 );
-    //ofb.zw = sign( ofb.zw-0.5 );
-    //ofc.zw = sign( ofc.zw-0.5 );
-    //ofd.zw = sign( ofd.zw-0.5 );
-    //
-    //// uv's, and derivatives (for correct mipmapping)
-    //vec2 uva = uv*ofa.zw + ofa.xy, ddxa = ddx*ofa.zw, ddya = ddy*ofa.zw;
-    //vec2 uvb = uv*ofb.zw + ofb.xy, ddxb = ddx*ofb.zw, ddyb = ddy*ofb.zw;
-    //vec2 uvc = uv*ofc.zw + ofc.xy, ddxc = ddx*ofc.zw, ddyc = ddy*ofc.zw;
-    //vec2 uvd = uv*ofd.zw + ofd.xy, ddxd = ddx*ofd.zw, ddyd = ddy*ofd.zw;
-    //    
-    //// fetch and blend
-    //vec2 b = smoothstep( 0.25,0.75, fuv );
-    //
-    //return mix( mix( textureGrad( samp, uva, ddxa, ddya ), 
-    //                 textureGrad( samp, uvb, ddxb, ddyb ), b.x ), 
-    //            mix( textureGrad( samp, uvc, ddxc, ddyc ),
-    //                 textureGrad( samp, uvd, ddxd, ddyd ), b.x), b.y );
-}
+//vec4 hash4( vec2 p ) { return fract(sin(vec4( 1.0+dot(p,vec2(37.0,17.0)), 2.0+dot(p,vec2(11.0,47.0)), 3.0+dot(p,vec2(41.0,29.0)), 4.0+dot(p,vec2(23.0,31.0))))*103.0); }
 
 vec3 getNormalFromMap()
 {
@@ -121,61 +92,73 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 void main()
 {
-    vec3 albedo     = pow(textureNoTile(u_Albedo, s_TexCoord).rgb, vec3(2.2));
+    vec3 albedo     = pow(texture(u_Albedo, s_TexCoord).rgb, vec3(GAMMA));
     float metallic  = texture(u_Metallic, s_TexCoord).r;
     float roughness = texture(u_Roughness, s_TexCoord).r;
     float ao        = texture(u_AO, s_TexCoord).r;
 
     vec3 N = getNormalFromMap();
     vec3 V = normalize(u_CamPos - s_FragPos);
+    vec3 R = reflect(-V, N);
 
+    // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
+    // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, albedo, metallic);
 
+    // reflectance equation
     vec3 Lo = vec3(0.0);
-    // calculate per-light radiance
-    vec3 L = normalize(c_LightPosition - s_FragPos);
-    vec3 H = normalize(V + L);
-    float distance = length(c_LightPosition - s_FragPos);
-    float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = c_LightColor * attenuation;
+    for(int i = 0; i < MAX_LIGHTS; ++i) 
+    {
+        // calculate per-light radiance
+        vec3 L = normalize(u_LightPositions[i] - s_FragPos);
+        vec3 H = normalize(V + L);
+        float dist = length(u_LightPositions[i] - s_FragPos);
+        float attenuation = 1.0 / (dist * dist);
+        vec3 radiance = u_LightColors[i] * attenuation;
 
-    // Cook-Torrance BRDF
-    float NDF = DistributionGGX(N, H, roughness);   
-    float G   = GeometrySmith(N, V, L, roughness);      
-    vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
-       
-    vec3 nominator    = NDF * G * F; 
-    float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
-    vec3 specular = nominator / denominator;
+        // Cook-Torrance BRDF
+        float NDF = DistributionGGX(N, H, roughness);   
+        float G   = GeometrySmith(N, V, L, roughness);    
+        vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);        
+        
+        vec3 nominator    = NDF * G * F;
+        float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
+        vec3 specular = nominator / denominator;
+        
+         // kS is equal to Fresnel
+        vec3 kS = F;
+        // for energy conservation, the diffuse and specular light can't
+        // be above 1.0 (unless the surface emits light); to preserve this
+        // relationship the diffuse component (kD) should equal 1.0 - kS.
+        vec3 kD = vec3(1.0) - kS;
+        // multiply kD by the inverse metalness such that only non-metals 
+        // have diffuse lighting, or a linear blend if partly metal (pure metals
+        // have no diffuse light).
+        kD *= 1.0 - metallic;	                
+            
+        // scale light by NdotL
+        float NdotL = max(dot(N, L), 0.0);        
+
+        // add to outgoing radiance Lo
+        Lo += (kD * albedo / c_PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    }   
     
-    // kS is equal to Fresnel
-    vec3 kS = F;
-    // for energy conservation, the diffuse and specular light can't
-    // be above 1.0 (unless the surface emits light); to preserve this
-    // relationship the diffuse component (kD) should equal 1.0 - kS.
-    vec3 kD = vec3(1.0) - kS;
-    // multiply kD by the inverse metalness such that only non-metals 
-    // have diffuse lighting, or a linear blend if partly metal (pure metals
-    // have no diffuse light).
+    // ambient lighting (we now use IBL as the ambient term)
+    vec3 kS = fresnelSchlick(max(dot(N, V), 0.0), F0);
+    vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;	  
-
-    // scale light by NdotL
-    float NdotL = max(dot(N, L), 0.0);        
-
-    // add to outgoing radiance Lo
-    Lo += (kD * albedo / c_PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-    
-    // ambient lighting (note that the next IBL tutorial will replace 
-    // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * albedo * ao;
+    vec3 irradiance = texture(u_Environment, N).rgb;
+    vec3 diffuse      = irradiance * albedo;
+    vec3 ambient = (kD * diffuse) * ao;
+    // vec3 ambient = vec3(0.002);
     
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));
     // gamma correct
-    color = pow(color, vec3(1.0/2.2)); 
+    color = pow(color, vec3(1.0/GAMMA)); 
 
-    out_Color = vec4(color, 1.0);
+    out_Color = vec4(color , 1.0);
 }

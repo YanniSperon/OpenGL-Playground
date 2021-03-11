@@ -47,12 +47,12 @@ void Camera::SetIsFocused(bool isFocused)
 	m_IsFocused = isFocused;
 }
 
-void Camera::SetSkybox(const std::string& path)
+void Camera::SetSkybox(const std::string& path, float gamma)
 {
 	if (m_Skybox) {
 		delete m_Skybox;
 	}
-	m_Skybox = new Skybox(path);
+	m_Skybox = new Skybox(path, gamma);
 }
 
 const float Camera::GetNearPlane()

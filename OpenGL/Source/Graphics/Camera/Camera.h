@@ -28,7 +28,7 @@ public:
 	void SetTranslation(const glm::vec3& translation);
 	void SetUpDirection(const glm::vec3& upDirection);
 	void SetIsFocused(bool isFocused);
-	void SetSkybox(const std::string& path);
+	void SetSkybox(const std::string& path, float gamma);
 
 	const float GetNearPlane();
 	const float GetFarPlane();

@@ -17,18 +17,25 @@ void LinearRenderer::Flush(int width, int height, Camera* camera)
 	glm::mat4 view = camera->GetViewMatrix();
 	glm::vec3 cameraPosition = camera->GetTranslation();
 
-	camera->GetSkybox()->Draw(projection, view);
+	Skybox* skybox = camera->GetSkybox();
+	skybox->Draw(projection, view);
 
 	while (!m_OpaqueQueue.empty()) {
 		Object* renderable = m_OpaqueQueue.front();
 		if (renderable->GetIsEnabled()) {
 			renderable->Bind();
+			skybox->BindIrradianceMap(5);
+			
+			Shader& shader = renderable->GetMaterial().GetShader();
 
-			renderable->GetMaterial().GetShader().SetMat4("u_M", renderable->GetFinalTransformationMatrix());
-			renderable->GetMaterial().GetShader().SetMat4("u_V", view);
-			renderable->GetMaterial().GetShader().SetMat4("u_P", projection);
+			shader.SetVec3("u_LightPositions[0]", glm::vec3(0.0f, 0.0f, 0.0f));
+			shader.SetVec3("u_LightColors[0]", glm::vec3(300.0f, 300.0f, 300.0f));
 
-			renderable->GetMaterial().GetShader().SetVec3("u_CamPos", cameraPosition);
+			shader.SetMat4("u_M", renderable->GetFinalTransformationMatrix());
+			shader.SetMat4("u_V", view);
+			shader.SetMat4("u_P", projection);
+
+			shader.SetVec3("u_CamPos", cameraPosition);
 
 			renderable->GetMesh().Draw();
 		}
@@ -42,12 +49,18 @@ void LinearRenderer::Flush(int width, int height, Camera* camera)
 		Object* renderable = m_TranslucentQueue.front();
 		if (renderable->GetIsEnabled()) {
 			renderable->Bind();
+			skybox->BindIrradianceMap(5);
 
-			renderable->GetMaterial().GetShader().SetMat4("u_M", renderable->GetFinalTransformationMatrix());
-			renderable->GetMaterial().GetShader().SetMat4("u_V", view);
-			renderable->GetMaterial().GetShader().SetMat4("u_P", projection);
+			Shader& shader = renderable->GetMaterial().GetShader();
 
-			renderable->GetMaterial().GetShader().SetVec3("u_CamPos", cameraPosition);
+			shader.SetVec3("u_LightPositions[0]", glm::vec3(0.0f, 0.0f, 0.0f));
+			shader.SetVec3("u_LightColors[0]", glm::vec3(300.0f, 300.0f, 300.0f));
+
+			shader.SetMat4("u_M", renderable->GetFinalTransformationMatrix());
+			shader.SetMat4("u_V", view);
+			shader.SetMat4("u_P", projection);
+
+			shader.SetVec3("u_CamPos", cameraPosition);
 
 			renderable->GetMesh().Draw();
 		}
