@@ -9,7 +9,7 @@ uniform float u_Gamma = 2.2;
 
 void main()
 {
-    vec3 envColor = texture(m_EnvironmentMap, s_FragPos).rgb;
+    vec3 envColor = textureLod(m_EnvironmentMap, s_FragPos, 0.0).rgb;
 
     envColor = envColor / (envColor + vec3(1.0));
     envColor = pow(envColor, vec3(1.0/u_Gamma));

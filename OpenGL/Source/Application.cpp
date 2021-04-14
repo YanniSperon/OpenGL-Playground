@@ -254,6 +254,7 @@ int main() {
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glCullFace(GL_CCW);
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -453,6 +454,10 @@ int main() {
 	objects[0]->SetTranslation(glm::vec3(0.0f, -3.0f, 0.0f));
 	objects[0]->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 
+	objects.push_back(new Object("Resources/Sphere.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Metal/Rust", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false));
+	objects[1]->SetTranslation(glm::vec3(1.0f, 3.0f, 2.0f));
+	objects[1]->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+
 	Camera* camera = new Camera();
 	camera->SetSkybox("Resources/Skybox/Canyon.hdr", 1.6f);
 
@@ -502,9 +507,16 @@ int main() {
 		if (input->GetKeyboardKeyHeld(AD_KEY_SPACE)) {
 			camera->MoveUp(deltaTime);
 		}
-			
+		
 		if (didMove) {
 			camera->LookAtMouse(mouseSensitivity, input->GetMousePositionX(), input->GetMousePositionY(), input->GetOldMousePositionX(), input->GetOldMousePositionY());
+		}
+
+		if (input->GetKeyboardKeyHeld(AD_KEY_R)) {
+			objects[0]->AddRotation(glm::vec3(0.0f, 0.0f, 25.0f * deltaTime));
+		}
+		if (input->GetKeyboardKeyHeld(AD_KEY_F)) {
+			objects[0]->AddRotation(glm::vec3(0.0f, 0.0f, -25.0f * deltaTime));
 		}
 
 

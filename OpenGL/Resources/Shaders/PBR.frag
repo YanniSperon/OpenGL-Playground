@@ -6,27 +6,30 @@ in vec2 s_TexCoord;
 in vec3 s_Normal;
 in vec3 s_FragPos;
 
+// Material
 layout(binding = 0) uniform sampler2D u_Albedo;
 layout(binding = 1) uniform sampler2D u_Normal;
 layout(binding = 2) uniform sampler2D u_Metallic;
 layout(binding = 3) uniform sampler2D u_Roughness;
 layout(binding = 4) uniform sampler2D u_AO;
-layout(binding = 5) uniform samplerCube u_Environment;
+
+// IBL
+layout(binding = 5) uniform samplerCube irradianceMap;
+layout(binding = 6) uniform samplerCube prefilterMap;
+layout(binding = 7) uniform sampler2D brdfLUT;
 
 uniform vec3 u_CamPos;
 
-const vec3 c_LightPosition = vec3(0.0, 0.0, 0.0);
-const vec3 c_LightColor = vec3(300.0, 300.0, 300.0);
-
 #define GAMMA 2.2
-#define MAX_LIGHTS 1
+#define MAX_LIGHTS 100
 
+// Lights
 uniform vec3 u_LightPositions[MAX_LIGHTS];
 uniform vec3 u_LightColors[MAX_LIGHTS];
 
-const float c_PI = 3.14159265359;
+uniform int u_NumLights;
 
-//vec4 hash4( vec2 p ) { return fract(sin(vec4( 1.0+dot(p,vec2(37.0,17.0)), 2.0+dot(p,vec2(11.0,47.0)), 3.0+dot(p,vec2(41.0,29.0)), 4.0+dot(p,vec2(23.0,31.0))))*103.0); }
+const float c_PI = 3.14159265359;
 
 vec3 getNormalFromMap()
 {
@@ -63,6 +66,7 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 {
     float r = (roughness + 1.0);
     float k = (r*r) / 8.0;
+    // k becomes a^2/2.0 when IBL
 
     float nom   = NdotV;
     float denom = NdotV * (1.0 - k) + k;
@@ -92,10 +96,10 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 void main()
 {
-    vec3 albedo     = pow(texture(u_Albedo, s_TexCoord).rgb, vec3(GAMMA));
-    float metallic  = texture(u_Metallic, s_TexCoord).r;
+    vec3 albedo = pow(texture(u_Albedo, s_TexCoord).rgb, vec3(GAMMA));
+    float metallic = texture(u_Metallic, s_TexCoord).r;
     float roughness = texture(u_Roughness, s_TexCoord).r;
-    float ao        = texture(u_AO, s_TexCoord).r;
+    float ao = texture(u_AO, s_TexCoord).r;
 
     vec3 N = getNormalFromMap();
     vec3 V = normalize(u_CamPos - s_FragPos);
@@ -108,7 +112,7 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < MAX_LIGHTS; ++i) 
+    for(int i = 0; i < u_NumLights; ++i) 
     {
         // calculate per-light radiance
         vec3 L = normalize(u_LightPositions[i] - s_FragPos);
@@ -122,7 +126,7 @@ void main()
         float G   = GeometrySmith(N, V, L, roughness);    
         vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);        
         
-        vec3 nominator    = NDF * G * F;
+        vec3 nominator = NDF * G * F;
         float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
         vec3 specular = nominator / denominator;
         
@@ -142,23 +146,32 @@ void main()
 
         // add to outgoing radiance Lo
         Lo += (kD * albedo / c_PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-    }   
-    
+    }
+
     // ambient lighting (we now use IBL as the ambient term)
-    vec3 kS = fresnelSchlick(max(dot(N, V), 0.0), F0);
+    vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+    
+    vec3 kS = F;
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;	  
-    vec3 irradiance = texture(u_Environment, N).rgb;
+    
+    vec3 irradiance = texture(irradianceMap, N).rgb;
     vec3 diffuse      = irradiance * albedo;
-    vec3 ambient = (kD * diffuse) * ao;
-    // vec3 ambient = vec3(0.002);
+    
+    // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
+    const float MAX_REFLECTION_LOD = 4.0;
+    vec3 prefilteredColor = textureLod(prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;    
+    vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+
+    vec3 ambient = (kD * diffuse + specular) * ao;
     
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));
     // gamma correct
-    color = pow(color, vec3(1.0/GAMMA)); 
+    color = pow(color, vec3(1.0/GAMMA));
 
-    out_Color = vec4(color , 1.0);
+    out_Color = vec4(color, 1.0);
 }

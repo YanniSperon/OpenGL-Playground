@@ -18,18 +18,22 @@ void LinearRenderer::Flush(int width, int height, Camera* camera)
 	glm::vec3 cameraPosition = camera->GetTranslation();
 
 	Skybox* skybox = camera->GetSkybox();
-	skybox->Draw(projection, view);
 
 	while (!m_OpaqueQueue.empty()) {
 		Object* renderable = m_OpaqueQueue.front();
 		if (renderable->GetIsEnabled()) {
 			renderable->Bind();
 			skybox->BindIrradianceMap(5);
+			skybox->BindPrefilterMap(6);
+			skybox->BindBRDFLUT(7);
 			
 			Shader& shader = renderable->GetMaterial().GetShader();
 
 			shader.SetVec3("u_LightPositions[0]", glm::vec3(0.0f, 0.0f, 0.0f));
 			shader.SetVec3("u_LightColors[0]", glm::vec3(300.0f, 300.0f, 300.0f));
+			shader.SetVec3("u_LightPositions[1]", glm::vec3(10.0f, 3.0f, 10.0f));
+			shader.SetVec3("u_LightColors[1]", glm::vec3(300.0f, 300.0f, 300.0f));
+			shader.SetInt("u_NumLights", 2);
 
 			shader.SetMat4("u_M", renderable->GetFinalTransformationMatrix());
 			shader.SetMat4("u_V", view);
@@ -42,6 +46,8 @@ void LinearRenderer::Flush(int width, int height, Camera* camera)
 		m_OpaqueQueue.pop_front();
 	}
 
+	skybox->Draw(projection, view);
+
 	std::sort(m_TranslucentQueue.begin(), m_TranslucentQueue.end(), [&cameraPosition](Object* obj1, Object* obj2) {
 		return glm::length2(cameraPosition - obj1->GetTranslation()) < glm::length2(cameraPosition - obj2->GetTranslation());
 	});
@@ -50,11 +56,16 @@ void LinearRenderer::Flush(int width, int height, Camera* camera)
 		if (renderable->GetIsEnabled()) {
 			renderable->Bind();
 			skybox->BindIrradianceMap(5);
+			skybox->BindPrefilterMap(6);
+			skybox->BindBRDFLUT(7);
 
 			Shader& shader = renderable->GetMaterial().GetShader();
 
 			shader.SetVec3("u_LightPositions[0]", glm::vec3(0.0f, 0.0f, 0.0f));
 			shader.SetVec3("u_LightColors[0]", glm::vec3(300.0f, 300.0f, 300.0f));
+			shader.SetVec3("u_LightPositions[1]", glm::vec3(10.0f, 3.0f, 10.0f));
+			shader.SetVec3("u_LightColors[1]", glm::vec3(300.0f, 300.0f, 300.0f));
+			shader.SetInt("u_NumLights", 2);
 
 			shader.SetMat4("u_M", renderable->GetFinalTransformationMatrix());
 			shader.SetMat4("u_V", view);
@@ -66,4 +77,7 @@ void LinearRenderer::Flush(int width, int height, Camera* camera)
 		}
 		m_TranslucentQueue.pop_front();
 	}
+
+	//skybox->RenderBRDF();
+
 }
