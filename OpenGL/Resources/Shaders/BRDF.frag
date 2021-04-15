@@ -1,6 +1,6 @@
 #version 460
 
-out vec2 out_Color;
+out vec4 out_Color;
 in vec2 s_TexCoord;
 
 const float c_PI = 3.14159265359;
@@ -110,5 +110,5 @@ vec2 IntegrateBRDF(float NdotV, float roughness)
 void main() 
 {
     vec2 integratedBRDF = IntegrateBRDF(s_TexCoord.x, s_TexCoord.y);
-    out_Color = integratedBRDF;
+    out_Color = vec4(integratedBRDF, 0.0, 1.0);
 }

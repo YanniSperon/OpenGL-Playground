@@ -7,10 +7,10 @@
 #include "stb_image.h"
 #include "glm/gtc/matrix_transform.hpp"
 
-#define ENVIRONMENT_MAP_RESOLUTION 512
-#define IRRADIANCE_MAP_RESOLUTION 32
-#define PREFILTER_MAP_RESOLUTION 128
-#define BRDF_LUT_RESOLUTION 512
+#define ENVIRONMENT_MAP_RESOLUTION 512 // 512
+#define IRRADIANCE_MAP_RESOLUTION 32 // 32
+#define PREFILTER_MAP_RESOLUTION 128 // 128
+#define BRDF_LUT_RESOLUTION 512 // 512
 
 Skybox::Skybox(const std::string& path, float gamma)
     : m_FBO(0), m_RBO(0), m_EnvironmentMap(0), m_CubeMapShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/Skybox", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_RenderShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/SkyboxDisplay", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_VAO(0), m_VBO(0), m_HDRTexture(TextureManager::GetInstance()->GetTexture(path)), m_CubeMesh(Mesh3DManager::GetInstance()->GetStaticMesh("Resources/Skybox.obj")), m_IrradianceShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/Irradiance", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_Gamma(gamma), m_PrefilterShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/Prefilter", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_BRDFShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/BRDF", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_PrefilterMap(0), m_BRDFLookUpTexture(0)
@@ -79,12 +79,6 @@ void Skybox::RenderBRDF()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_BRDFShader->Bind();
-    std::shared_ptr<Texture> tempTexture = TextureManager::GetInstance()->GetTexture("Resources/brdf.png");
-    tempTexture->SetHasFakeUser(true);
-    tempTexture->Bind(0);
-    std::shared_ptr<Shader> tempShader = ShaderManager::GetInstance()->GetShader("Resources/Shaders/Basic2D", SHADER_FRAGMENT_SHADER | SHADER_VERTEX_SHADER);
-    tempShader->SetHasFakeUser(true);
-    tempShader->Bind();
 
     unsigned int quadVAO = 0;
     unsigned int quadVBO = 0;
@@ -317,8 +311,9 @@ void Skybox::PrepareBRDFLUT()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+    // pre-allocate enough memory for the LUT texture.
     
+
 
     // reconfigure fbo
     glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
@@ -330,14 +325,8 @@ void Skybox::PrepareBRDFLUT()
 
     // render quad
     glViewport(0, 0, BRDF_LUT_RESOLUTION, BRDF_LUT_RESOLUTION);
-    std::shared_ptr<Texture> tempTexture = TextureManager::GetInstance()->GetTexture("Resources/brdf.png");
-    //m_BRDFShader->Bind();
+    m_BRDFShader->Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    tempTexture->SetHasFakeUser(true);
-    tempTexture->Bind(0);
-    std::shared_ptr<Shader> tempShader = ShaderManager::GetInstance()->GetShader("Resources/Shaders/Basic2D", SHADER_FRAGMENT_SHADER | SHADER_VERTEX_SHADER);
-    tempShader->SetHasFakeUser(true);
-    tempShader->Bind();
     
     // create quad
     unsigned int quadVAO = 0;
