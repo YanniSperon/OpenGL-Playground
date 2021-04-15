@@ -19,7 +19,7 @@ public:
 
 	void AddObject(Object* object);
 
-	virtual void Flush(int width, int height, Camera* camera) = 0;
+	virtual void Flush(int width, int height, Camera& camera) = 0;
 
 	static void InitializeSingleton(Renderer* renderer);
 	static Renderer* GetInstance();

@@ -8,5 +8,5 @@ private:
 public:
 	LinearRenderer();
 
-	void Flush(int width, int height, Camera* camera) override;
+	void Flush(int width, int height, Camera& camera) override;
 };

@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "Global.h"
 #include "Console.h"
+#include "SkyboxManager.h"
 
 #include "Vendor/glm/gtc/matrix_transform.hpp"
 #include "Vendor/glm/gtx/euler_angles.hpp"
@@ -47,12 +48,10 @@ void Camera::SetIsFocused(bool isFocused)
 	m_IsFocused = isFocused;
 }
 
-void Camera::SetSkybox(const std::string& path, float gamma)
+void Camera::SetSkybox(const std::string& path)
 {
-	if (m_Skybox) {
-		delete m_Skybox;
-	}
-	m_Skybox = new Skybox(path, gamma);
+	m_Skybox = SkyboxManager::GetInstance()->GetSkybox(path);
+	SkyboxManager::GetInstance()->MarkForCleanup();
 }
 
 const float Camera::GetNearPlane()
@@ -130,9 +129,9 @@ const bool Camera::GetIsFocused()
 	return m_IsFocused;
 }
 
-Skybox* Camera::GetSkybox()
+Skybox& Camera::GetSkybox()
 {
-	return m_Skybox;
+	return *m_Skybox;
 }
 
 void Camera::LookAtPosition(const glm::vec3& position)

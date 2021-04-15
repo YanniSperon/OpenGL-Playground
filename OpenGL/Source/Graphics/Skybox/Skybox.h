@@ -32,8 +32,10 @@ private:
 	GLuint m_BRDFLookUpTexture;
 
 	float m_Gamma;
+
+	bool m_FakeUser;
 public:
-	Skybox(const std::string& path, float gamma);
+	Skybox(const std::string& path);
 	~Skybox();
 
 	void Draw(const glm::mat4& projection, const glm::mat4& view);
@@ -44,6 +46,11 @@ public:
 	void BindIrradianceMap(int slot);
 	void BindPrefilterMap(int slot);
 	void BindBRDFLUT(int slot);
+
+	static void Unbind();
+
+	void SetHasFakeUser(bool fakeUser);
+	bool GetHasFakeUser();
 
 	void RenderBRDF();
 private:

@@ -110,6 +110,7 @@
     <ClInclude Include="Source\Graphics\Shader\Shader.h" />
     <ClInclude Include="Source\Graphics\Shader\ShaderManager.h" />
     <ClInclude Include="Source\Graphics\Skybox\Skybox.h" />
+    <ClInclude Include="Source\Graphics\Skybox\SkyboxManager.h" />
     <ClInclude Include="Source\Graphics\Texture\Texture.h" />
     <ClInclude Include="Source\Graphics\Texture\TextureManager.h" />
     <ClInclude Include="Source\Utility\Console.h" />
@@ -424,6 +425,7 @@
     <ClCompile Include="Source\Graphics\Shader\Shader.cpp" />
     <ClCompile Include="Source\Graphics\Shader\ShaderManager.cpp" />
     <ClCompile Include="Source\Graphics\Skybox\Skybox.cpp" />
+    <ClCompile Include="Source\Graphics\Skybox\SkyboxManager.cpp" />
     <ClCompile Include="Source\Graphics\Texture\Texture.cpp" />
     <ClCompile Include="Source\Graphics\Texture\TextureManager.cpp" />
     <ClCompile Include="Source\Utility\Console.cpp" />

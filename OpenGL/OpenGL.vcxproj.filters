@@ -997,6 +997,7 @@
     <ClInclude Include="Source\Vendor\stb\stb_image.h">
       <Filter>Vendor\stb</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Graphics\Skybox\SkyboxManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
@@ -1079,5 +1080,6 @@
     <ClCompile Include="Source\Vendor\stb\stb_image.cpp">
       <Filter>Vendor\stb</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Graphics\Skybox\SkyboxManager.cpp" />
   </ItemGroup>
 </Project>

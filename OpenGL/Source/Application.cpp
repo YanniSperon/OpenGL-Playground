@@ -462,8 +462,9 @@ int main() {
 	objects[2]->SetTranslation(glm::vec3(0.0f, 6.0f, 0.0f));
 	objects[2]->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 
-	Camera* camera = new Camera();
-	camera->SetSkybox("Resources/Skybox/Canyon.hdr", 1.6f);
+	Camera camera = Camera();
+	camera.SetSkybox("Resources/Skybox/Canyon.hdr");
+	camera.GetSkybox().SetGamma(1.6f);
 
 
 
@@ -494,26 +495,26 @@ int main() {
 		}
 
 		if (input->GetKeyboardKeyHeld(AD_KEY_W)) {
-			camera->MoveForward(deltaTime);
+			camera.MoveForward(deltaTime);
 		}
 		if (input->GetKeyboardKeyHeld(AD_KEY_A)) {
-			camera->StrafeLeft(deltaTime);
+			camera.StrafeLeft(deltaTime);
 		}
 		if (input->GetKeyboardKeyHeld(AD_KEY_S)) {
-			camera->MoveBackward(deltaTime);
+			camera.MoveBackward(deltaTime);
 		}
 		if (input->GetKeyboardKeyHeld(AD_KEY_D)) {
-			camera->StrafeRight(deltaTime);
+			camera.StrafeRight(deltaTime);
 		}
 		if (input->GetKeyboardKeyHeld(AD_KEY_LEFT_CONTROL)) {
-			camera->MoveDown(deltaTime);
+			camera.MoveDown(deltaTime);
 		}
 		if (input->GetKeyboardKeyHeld(AD_KEY_SPACE)) {
-			camera->MoveUp(deltaTime);
+			camera.MoveUp(deltaTime);
 		}
 		
 		if (didMove) {
-			camera->LookAtMouse(mouseSensitivity, input->GetMousePositionX(), input->GetMousePositionY(), input->GetOldMousePositionX(), input->GetOldMousePositionY());
+			camera.LookAtMouse(mouseSensitivity, input->GetMousePositionX(), input->GetMousePositionY(), input->GetOldMousePositionX(), input->GetOldMousePositionY());
 		}
 
 		if (input->GetKeyboardKeyHeld(AD_KEY_R)) {

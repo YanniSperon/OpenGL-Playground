@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include <memory>
 
 class Camera {
 private:
@@ -17,7 +18,7 @@ private:
 
 	bool m_IsFocused;
 
-	Skybox* m_Skybox;
+	std::shared_ptr<Skybox> m_Skybox;
 public:
 	Camera();
 	~Camera();
@@ -28,7 +29,7 @@ public:
 	void SetTranslation(const glm::vec3& translation);
 	void SetUpDirection(const glm::vec3& upDirection);
 	void SetIsFocused(bool isFocused);
-	void SetSkybox(const std::string& path, float gamma);
+	void SetSkybox(const std::string& path);
 
 	const float GetNearPlane();
 	const float GetFarPlane();
@@ -45,7 +46,7 @@ public:
 	glm::mat4 GetProjectionMatrix(int width, int height);
 	glm::mat4 GetViewMatrix();
 	const bool GetIsFocused();
-	Skybox* GetSkybox();
+	Skybox& GetSkybox();
 
 	void LookAtPosition(const glm::vec3& position);
 	void LookInDirection(const glm::vec3& forwardDirection);

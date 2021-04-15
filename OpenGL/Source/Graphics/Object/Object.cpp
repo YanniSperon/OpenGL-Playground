@@ -9,6 +9,7 @@
 Object::Object(const std::string& meshPath, std::string shaderPath, int shaderType, std::string texturePath, int textureTypes, bool isDynamic)
 	: m_Mesh(Mesh3DManager::GetInstance()->GetMesh(meshPath, isDynamic)), m_Material(MaterialManager::GetInstance()->GetMaterial(shaderPath, shaderType, texturePath, textureTypes)), m_Translation(0.0f), m_Rotation(0.0f), m_Scale(1.0f), m_IsDynamic(isDynamic), m_FinalTransformation(1.0f), m_IsTranslucent(false), m_IsEnabled(true)
 {
+
 }
 
 Object::~Object()
