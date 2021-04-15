@@ -50,7 +50,7 @@ void Camera::SetIsFocused(bool isFocused)
 
 void Camera::SetSkybox(const std::string& path)
 {
-	m_Skybox = SkyboxManager::GetInstance()->GetSkybox(path);
+	m_Skybox = std::move(SkyboxManager::GetInstance()->GetSkybox(path));
 	SkyboxManager::GetInstance()->MarkForCleanup();
 }
 

@@ -7,11 +7,6 @@
 #include "stb_image.h"
 #include "glm/gtc/matrix_transform.hpp"
 
-#define ENVIRONMENT_MAP_RESOLUTION 512 // 512
-#define IRRADIANCE_MAP_RESOLUTION 32 // 32
-#define PREFILTER_MAP_RESOLUTION 512 // 128
-#define BRDF_LUT_RESOLUTION 512 // 512
-
 Skybox::Skybox(const std::string& path)
     : m_FBO(0), m_RBO(0), m_EnvironmentMap(0), m_CubeMapShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/Skybox", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_RenderShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/SkyboxDisplay", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_VAO(0), m_VBO(0), m_HDRTexture(TextureManager::GetInstance()->GetTexture(path)), m_CubeMesh(Mesh3DManager::GetInstance()->GetStaticMesh("Resources/Skybox.obj")), m_IrradianceShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/Irradiance", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_Gamma(2.2f), m_PrefilterShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/Prefilter", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_BRDFShader(ShaderManager::GetInstance()->GetShader("Resources/Shaders/BRDF", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER)), m_PrefilterMap(0), m_BRDFLookUpTexture(0)
 {

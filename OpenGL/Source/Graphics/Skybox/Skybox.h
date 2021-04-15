@@ -1,5 +1,10 @@
 #pragma once
 
+#define ENVIRONMENT_MAP_RESOLUTION 512 // 512
+#define IRRADIANCE_MAP_RESOLUTION 32 // 32
+#define PREFILTER_MAP_RESOLUTION 128 // 128
+#define BRDF_LUT_RESOLUTION 512 // 512
+
 #include "Shader.h"
 #include "Texture.h"
 #include "Mesh3D.h"

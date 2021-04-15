@@ -5,6 +5,7 @@
 #include "TextureManager.h"
 #include "ShaderManager.h"
 #include "MaterialManager.h"
+#include "SkyboxManager.h"
 #include "Renderer.h"
 #include "LinearRenderer.h"
 
@@ -22,6 +23,7 @@ void Global::Initialize()
 	TextureManager::InitializeSingleton();
 	ShaderManager::InitializeSingleton();
 	MaterialManager::InitializeSingleton();
+	SkyboxManager::InitializeSingleton();
 	Renderer::InitializeSingleton(new LinearRenderer());
 }
 
@@ -41,6 +43,7 @@ void Global::Update()
 	Mesh3DManager::GetInstance()->Cleanup();
 	TextureManager::GetInstance()->Cleanup();
 	ShaderManager::GetInstance()->Cleanup();
+	SkyboxManager::GetInstance()->Cleanup();
 }
 
 void Global::Cleanup()
@@ -49,5 +52,7 @@ void Global::Cleanup()
 	Mesh3DManager::CleanupSingleton();
 	TextureManager::CleanupSingleton();
 	ShaderManager::CleanupSingleton();
+	SkyboxManager::CleanupSingleton();
+
 	Renderer::CleanupSingleton();
 }

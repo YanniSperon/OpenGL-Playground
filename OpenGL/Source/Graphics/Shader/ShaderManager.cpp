@@ -1,7 +1,6 @@
 #include "ShaderManager.h"
 #include "Console.h"
 
-
 static ShaderManager* s_ShaderManager;
 
 ShaderManager::ShaderManager()
