@@ -1,14 +1,14 @@
 # OpenGL-Playground
 Test environment for new OpenGL implementations, houses the current iteration of the rendering engine for the Andromeda game engine.
-- [ ] PBR (Physically Based Rendering)
+- [X] PBR (Physically Based Rendering)
   - [X] PBR Lighting calculations
     - [X] Varying Light Colors
     - [X] Multiple Lights
-  - [ ] HDR Skybox with PBR sampling
+  - [X] HDR Skybox with PBR sampling
     - [X] Diffuse sampling
-    - [ ] Specular sampling
+    - [X] Specular sampling
       - [X] Prefiltered environment map sampling based on roughness
-      - [ ] Generation of the BDRF LUT
+      - [X] Generation of the BDRF LUT
 - [ ] Shadow Mapping
 - [ ] Reflections
   - [ ] SSR (Screen Space Reflections)
