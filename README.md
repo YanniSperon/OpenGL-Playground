@@ -2,11 +2,20 @@
 Test environment for new OpenGL implementations, houses the current iteration of the rendering engine for the Andromeda game engine.
 - [ ] PBR (Physically Based Rendering)
   - [X] PBR Lighting calculations
-  - [X] HDR Skybox with PBR sampling
+    - [X] Varying Light Colors
+    - [X] Multiple Lights
+  - [ ] HDR Skybox with PBR sampling
+    - [X] Diffuse sampling
+    - [ ] Specular sampling
+      - [X] Prefiltered environment map sampling based on roughness
+      - [ ] Generation of the BDRF LUT
 - [ ] Shadow Mapping
 - [ ] Reflections
   - [ ] SSR (Screen Space Reflections)
   - [ ] Environment Probe
 - [ ] Skeletal Animation
+- [ ] Deferred Shading
+- [ ] Frustrum culling
+- [ ] OIT (Order independent  transparency)
 - [ ] Automatic LOD (Level of Detail) model loading and rendering
 - [ ] Assimp complex model support
