@@ -12,7 +12,7 @@ Test environment for new OpenGL implementations, houses the current iteration of
 - [ ] Shadow Mapping
 - [ ] Reflections
   - [ ] SSR (Screen Space Reflections)
-  - [ ] Environment Probe
+  - [ ] Environment Probes
 - [ ] Skeletal Animation
 - [ ] Deferred Shading
 - [ ] Frustrum culling
