@@ -29,7 +29,7 @@ void LinearRenderer::Flush(int width, int height, Camera& camera)
 			
 			Shader& shader = renderable->GetMaterial().GetShader();
 
-			shader.SetVec3("u_LightPositions[0]", glm::vec3(0.0f, 0.0f, 0.0f));
+			shader.SetVec3("u_LightPositions[0]", glm::vec3(0.0f, 7.0f, 0.0f));
 			shader.SetVec3("u_LightColors[0]", glm::vec3(300.0f, 300.0f, 300.0f));
 			shader.SetVec3("u_LightPositions[1]", glm::vec3(10.0f, 3.0f, 10.0f));
 			shader.SetVec3("u_LightColors[1]", glm::vec3(300.0f, 300.0f, 300.0f));
@@ -61,7 +61,7 @@ void LinearRenderer::Flush(int width, int height, Camera& camera)
 
 			Shader& shader = renderable->GetMaterial().GetShader();
 
-			shader.SetVec3("u_LightPositions[0]", glm::vec3(0.0f, 0.0f, 0.0f));
+			shader.SetVec3("u_LightPositions[0]", glm::vec3(0.0f, 7.0f, 0.0f));
 			shader.SetVec3("u_LightColors[0]", glm::vec3(300.0f, 300.0f, 300.0f));
 			shader.SetVec3("u_LightPositions[1]", glm::vec3(10.0f, 3.0f, 10.0f));
 			shader.SetVec3("u_LightColors[1]", glm::vec3(300.0f, 300.0f, 300.0f));
