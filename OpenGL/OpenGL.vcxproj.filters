@@ -19,8 +19,8 @@
     <Filter Include="Graphics\Object">
       <UniqueIdentifier>{DC2B1DA7-48B7-8A6B-51C8-0D60BDD2E66B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics\Renderer">
-      <UniqueIdentifier>{7C6F0F98-E885-0D2E-31FD-984F9D52DEB5}</UniqueIdentifier>
+    <Filter Include="Graphics\Scene">
+      <UniqueIdentifier>{B3383A89-9F06-2E8F-889A-9EB574070AF4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Graphics\Shader">
       <UniqueIdentifier>{FC6DD9B0-68F9-4675-710A-CA69DD14A375}</UniqueIdentifier>
@@ -94,11 +94,8 @@
     <ClInclude Include="Source\Graphics\Object\Object.h">
       <Filter>Graphics\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Renderer\LinearRenderer.h">
-      <Filter>Graphics\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Renderer\Renderer.h">
-      <Filter>Graphics\Renderer</Filter>
+    <ClInclude Include="Source\Graphics\Scene\Scene.h">
+      <Filter>Graphics\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Shader\Shader.h">
       <Filter>Graphics\Shader</Filter>
@@ -107,6 +104,9 @@
       <Filter>Graphics\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Skybox\Skybox.h">
+      <Filter>Graphics\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Skybox\SkyboxManager.h">
       <Filter>Graphics\Skybox</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Texture\Texture.h">
@@ -997,7 +997,6 @@
     <ClInclude Include="Source\Vendor\stb\stb_image.h">
       <Filter>Vendor\stb</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Skybox\SkyboxManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
@@ -1029,11 +1028,8 @@
     <ClCompile Include="Source\Graphics\Object\Object.cpp">
       <Filter>Graphics\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Renderer\LinearRenderer.cpp">
-      <Filter>Graphics\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Renderer\Renderer.cpp">
-      <Filter>Graphics\Renderer</Filter>
+    <ClCompile Include="Source\Graphics\Scene\Scene.cpp">
+      <Filter>Graphics\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Shader\Shader.cpp">
       <Filter>Graphics\Shader</Filter>
@@ -1042,6 +1038,9 @@
       <Filter>Graphics\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Skybox\Skybox.cpp">
+      <Filter>Graphics\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Skybox\SkyboxManager.cpp">
       <Filter>Graphics\Skybox</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Texture\Texture.cpp">
@@ -1080,6 +1079,5 @@
     <ClCompile Include="Source\Vendor\stb\stb_image.cpp">
       <Filter>Vendor\stb</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Skybox\SkyboxManager.cpp" />
   </ItemGroup>
 </Project>

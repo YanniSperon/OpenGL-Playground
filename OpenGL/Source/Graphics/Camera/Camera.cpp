@@ -129,9 +129,9 @@ const bool Camera::GetIsFocused()
 	return m_IsFocused;
 }
 
-Skybox& Camera::GetSkybox()
+Skybox* Camera::GetSkybox()
 {
-	return *m_Skybox;
+	return m_Skybox.get();
 }
 
 void Camera::LookAtPosition(const glm::vec3& position)

@@ -46,7 +46,7 @@ public:
 	glm::mat4 GetProjectionMatrix(int width, int height);
 	glm::mat4 GetViewMatrix();
 	const bool GetIsFocused();
-	Skybox& GetSkybox();
+	Skybox* GetSkybox();
 
 	void LookAtPosition(const glm::vec3& position);
 	void LookInDirection(const glm::vec3& forwardDirection);

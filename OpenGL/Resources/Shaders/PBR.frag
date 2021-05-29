@@ -22,6 +22,7 @@ uniform vec3 u_CamPos;
 
 #define GAMMA 2.2
 #define MAX_LIGHTS 100
+#define ATTENUATION_MINIMUM 0.001f
 
 // Lights
 uniform vec3 u_LightPositions[MAX_LIGHTS];
@@ -96,7 +97,8 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 void main()
 {
-    vec3 albedo = pow(texture(u_Albedo, s_TexCoord).rgb, vec3(GAMMA));
+    vec4 albedoRaw = texture(u_Albedo, s_TexCoord);
+    vec3 albedo = pow(albedoRaw.rgb, vec3(GAMMA));
     float metallic = texture(u_Metallic, s_TexCoord).r;
     float roughness = texture(u_Roughness, s_TexCoord).r;
     float ao = texture(u_AO, s_TexCoord).r;
@@ -114,12 +116,17 @@ void main()
     vec3 Lo = vec3(0.0);
     for(int i = 0; i < u_NumLights; ++i) 
     {
-        // calculate per-light radiance
-        vec3 L = normalize(u_LightPositions[i] - s_FragPos);
-        vec3 H = normalize(V + L);
         float dist = length(u_LightPositions[i] - s_FragPos);
         float attenuation = 1.0 / (dist * dist);
         vec3 radiance = u_LightColors[i] * attenuation;
+        float largestRadianceComp = max(max(radiance.r, radiance.g), radiance.b);
+
+        if (largestRadianceComp < ATTENUATION_MINIMUM) {
+            continue;
+        }
+        // calculate per-light radiance
+        vec3 L = normalize(u_LightPositions[i] - s_FragPos);
+        vec3 H = normalize(V + L);
 
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, roughness);   
@@ -173,5 +180,5 @@ void main()
     // gamma correct
     color = pow(color, vec3(1.0/GAMMA));
 
-    out_Color = vec4(color, 1.0);
+    out_Color = vec4(color, albedoRaw.a);
 }

@@ -1,39 +1,32 @@
 #pragma once
 
-#include "Shader.h"
-
-#include <memory>
 #include <glm/glm.hpp>
-#include <glew.h>
 
 class Light {
 private:
 	glm::vec3 m_Translation;
-	glm::vec3 m_Rotation;
+	glm::vec3 m_Color;
 
-	glm::vec3 m_Ambient;
-	glm::vec3 m_Diffuse;
-	glm::vec3 m_Specular;
+	bool m_IsEnabled;
 
 public:
 	Light();
 	~Light();
 
 	void SetTranslation(const glm::vec3& translation);
-	void SetRotation(const glm::vec3& rotation);
-	void SetAmbient(const glm::vec3& ambient);
-	void SetDiffuse(const glm::vec3& diffuse);
-	void SetSpecular(const glm::vec3& specular);
+	void SetColor(const glm::vec3& color);
+	void SetIsEnabled(bool isEnabled);
 
-	const glm::vec3& GetTranslation();
-	const glm::vec3& GetRotation();
+	void AddTranslation(const glm::vec3& translation);
+	void AddColor(const glm::vec3& color);
 
-	const glm::vec3& GetAmbient();
-	const glm::vec3& GetDiffuse();
-	const glm::vec3& GetSpecular();
+	const glm::vec3& GetTranslation() const;
+	const glm::vec3& GetColor() const;
+	const bool GetIsEnabled() const;
 
 	glm::vec3& GetTranslationRef();
-	glm::vec3& GetRotationRef();
+	glm::vec3& GetColorRef();
+	bool& GetIsEnabledRef();
 
 	static Light* DeepCopy(Light* light);
 };

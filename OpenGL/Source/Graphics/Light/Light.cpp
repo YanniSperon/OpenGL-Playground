@@ -1,11 +1,7 @@
 #include "Light.h"
-#include "ShaderManager.h"
-
-#include "glm/gtc/matrix_transform.hpp"
-
 
 Light::Light()
-	: m_Rotation(0.0f), m_Translation(0.0f), m_Ambient(0.2f), m_Diffuse(0.5f), m_Specular(1.0f)
+	: m_Translation(0.0f), m_Color(300.0f, 300.0f, 300.0f), m_IsEnabled(true)
 {
 }
 
@@ -19,49 +15,39 @@ void Light::SetTranslation(const glm::vec3& translation)
 	m_Translation = translation;
 }
 
-void Light::SetRotation(const glm::vec3& rotation)
+void Light::SetColor(const glm::vec3& color)
 {
-	m_Rotation = rotation;
+	m_Color = color;
 }
 
-void Light::SetAmbient(const glm::vec3& ambient)
+void Light::SetIsEnabled(bool isEnabled)
 {
-	m_Ambient = ambient;
+	m_IsEnabled = isEnabled;
 }
 
-void Light::SetDiffuse(const glm::vec3& diffuse)
+void Light::AddTranslation(const glm::vec3& translation)
 {
-	m_Diffuse = diffuse;
+	m_Translation += translation;
 }
 
-void Light::SetSpecular(const glm::vec3& specular)
+void Light::AddColor(const glm::vec3& color)
 {
-	m_Specular = specular;
+	m_Color += color;
 }
 
-const glm::vec3& Light::GetTranslation()
+const glm::vec3& Light::GetTranslation() const
 {
 	return m_Translation;
 }
 
-const glm::vec3& Light::GetRotation()
+const glm::vec3& Light::GetColor() const
 {
-	return m_Rotation;
+	return m_Color;
 }
 
-const glm::vec3& Light::GetAmbient()
+const bool Light::GetIsEnabled() const
 {
-	return m_Ambient;
-}
-
-const glm::vec3& Light::GetDiffuse()
-{
-	return m_Diffuse;
-}
-
-const glm::vec3& Light::GetSpecular()
-{
-	return m_Specular;
+	return m_IsEnabled;
 }
 
 glm::vec3& Light::GetTranslationRef()
@@ -69,13 +55,21 @@ glm::vec3& Light::GetTranslationRef()
 	return m_Translation;
 }
 
-glm::vec3& Light::GetRotationRef()
+glm::vec3& Light::GetColorRef()
 {
-	return m_Rotation;
+	return m_Color;
+}
+
+bool& Light::GetIsEnabledRef()
+{
+	return m_IsEnabled;
 }
 
 Light* Light::DeepCopy(Light* light)
 {
 	Light* copy = new Light();
+	copy->m_Translation = light->m_Translation;
+	copy->m_Color = light->m_Color;
+	copy->m_IsEnabled = light->m_IsEnabled;
 	return copy;
 }

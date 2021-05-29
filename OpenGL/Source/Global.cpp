@@ -6,8 +6,6 @@
 #include "ShaderManager.h"
 #include "MaterialManager.h"
 #include "SkyboxManager.h"
-#include "Renderer.h"
-#include "LinearRenderer.h"
 
 #include <memory>
 
@@ -24,7 +22,6 @@ void Global::Initialize()
 	ShaderManager::InitializeSingleton();
 	MaterialManager::InitializeSingleton();
 	SkyboxManager::InitializeSingleton();
-	Renderer::InitializeSingleton(new LinearRenderer());
 }
 
 std::chrono::steady_clock::time_point& Global::GetStartTime()
@@ -53,6 +50,4 @@ void Global::Cleanup()
 	TextureManager::CleanupSingleton();
 	ShaderManager::CleanupSingleton();
 	SkyboxManager::CleanupSingleton();
-
-	Renderer::CleanupSingleton();
 }

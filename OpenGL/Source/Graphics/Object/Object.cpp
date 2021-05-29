@@ -7,7 +7,7 @@
 #include <glm/gtx/euler_angles.hpp>
 
 Object::Object(const std::string& meshPath, std::string shaderPath, int shaderType, std::string texturePath, int textureTypes, bool isDynamic)
-	: m_Mesh(Mesh3DManager::GetInstance()->GetMesh(meshPath, isDynamic)), m_Material(MaterialManager::GetInstance()->GetMaterial(shaderPath, shaderType, texturePath, textureTypes)), m_Translation(0.0f), m_Rotation(0.0f), m_Scale(1.0f), m_IsDynamic(isDynamic), m_FinalTransformation(1.0f), m_IsTranslucent(false), m_IsEnabled(true)
+	: m_Mesh(Mesh3DManager::GetInstance()->GetMesh(meshPath, isDynamic)), m_Material(MaterialManager::GetInstance()->GetMaterial(shaderPath, shaderType, texturePath, textureTypes)), m_Translation(0.0f), m_Rotation(0.0f), m_Scale(1.0f), m_IsDynamic(isDynamic), m_FinalTransformation(1.0f), m_IsEnabled(true)
 {
 
 }
@@ -48,11 +48,6 @@ glm::vec3& Object::GetScaleRef()
 	return m_Scale;
 }
 
-bool Object::GetIsTranslucent()
-{
-	return m_IsTranslucent;
-}
-
 bool Object::GetIsEnabled()
 {
 	return m_IsEnabled;
@@ -87,11 +82,6 @@ void Object::SetRotation(const glm::vec3& rotation)
 void Object::SetScale(const glm::vec3& scale)
 {
 	m_Scale = scale;
-}
-
-void Object::SetIsTranslucent(bool isTranslucent)
-{
-	m_IsTranslucent = isTranslucent;
 }
 
 void Object::SetIsEnabled(bool isEnabled)
