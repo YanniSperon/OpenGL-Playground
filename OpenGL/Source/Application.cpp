@@ -13,6 +13,12 @@
 #include <vector>
 #include <string>
 
+extern "C"
+{
+	__declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
 static void GLAPIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
 	switch (severity)
@@ -272,8 +278,7 @@ int main() {
 	ImGui::StyleColorsDark();
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(windowWidth, windowHeight);
-	static auto font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\tahoma.ttf", 14);
-	io.IniFilename = nullptr;
+	static auto font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\arial.ttf", 24);
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 	io.KeyMap[ImGuiKey_Tab] = AD_KEY_TAB;
@@ -440,22 +445,22 @@ int main() {
 
 	Scene scene;
 
-	Object* obj0 = new Object("Resources/MassivePlane.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Rust/Rust", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
+	Object* obj0 = new Object("Resources/MassivePlane.obj", "Resources/Shaders/Forward/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Rust/Rust", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
 	obj0->SetTranslation(glm::vec3(0.0f, -3.0f, 0.0f));
 	obj0->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	scene.AddOpaqueObject(obj0);
 
-	Object* obj1 = new Object("Resources/SmoothSphere.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Metal/Metal", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
+	Object* obj1 = new Object("Resources/SmoothSphere.obj", "Resources/Shaders/Forward/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Metal/Metal", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
 	obj1->SetTranslation(glm::vec3(3.0f, 0.0f, 0.0f));
 	obj1->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	scene.AddOpaqueObject(obj1);
 
-	Object* obj2 = new Object("Resources/SmoothSphere.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Shiny/Shiny", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
+	Object* obj2 = new Object("Resources/SmoothSphere.obj", "Resources/Shaders/Forward/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Shiny/Shiny", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
 	obj2->SetTranslation(glm::vec3(-3.0f, 0.0f, 0.0f));
 	obj2->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	scene.AddOpaqueObject(obj2);
 
-	Object* obj3 = new Object("Resources/SmoothSphere.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Shiny/Shiny", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
+	Object* obj3 = new Object("Resources/SmoothSphere.obj", "Resources/Shaders/Forward/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Shiny/Shiny", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
 	obj3->SetTranslation(glm::vec3(0.0f, 0.0f, 0.0f));
 	obj3->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	scene.AddOpaqueObject(obj3);
@@ -491,7 +496,6 @@ int main() {
 	auto currentTime = lastTime;
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
 	while (!glfwWindowShouldClose(window)) {
 		currentTime = std::chrono::high_resolution_clock::now();
 		auto deltaTimeNanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime);
@@ -529,6 +533,36 @@ int main() {
 		if (input->GetKeyboardKeyHeld(AD_KEY_SPACE)) {
 			camera.MoveUp(deltaTime);
 		}
+		if (input->GetKeyboardKeyPressed(AD_KEY_LEFT_ALT)) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			input->SetShouldCaptureMouseInput(true);
+			input->SetMouseWasBlocked(true);
+		}
+		if (input->GetKeyboardKeyPressed(AD_KEY_RIGHT_ALT)) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			input->SetShouldCaptureMouseInput(false);
+		}
+		if (input->GetKeyboardKeyPressed(AD_KEY_O)) {
+			scene.GetTransparentPipeline().SetPSFXShader("Resources/Shaders/PSFX/Grayscale", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER);
+		}
+		if (input->GetKeyboardKeyPressed(AD_KEY_P)) {
+			scene.GetTransparentPipeline().SetPSFXShader("Resources/Shaders/PSFX/Invert", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER);
+		}
+		if (input->GetKeyboardKeyPressed(AD_KEY_L)) {
+			scene.GetTransparentPipeline().SetPSFXShader("Resources/Shaders/PSFX/Basic", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER);
+		}
+		if (input->GetKeyboardKeyPressed(AD_KEY_K)) {
+			scene.GetTransparentPipeline().SetPSFXShader("Resources/Shaders/PSFX/Blur", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER);
+		}
+		if (input->GetKeyboardKeyPressed(AD_KEY_I)) {
+			scene.GetTransparentPipeline().SetPSFXShader("Resources/Shaders/PSFX/SharpenDarken", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER);
+		}
+		if (input->GetKeyboardKeyPressed(AD_KEY_U)) {
+			scene.GetTransparentPipeline().SetPSFXShader("Resources/Shaders/PSFX/SharpenLighten", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER);
+		}
+		if (input->GetKeyboardKeyPressed(AD_KEY_J)) {
+			scene.GetTransparentPipeline().SetPSFXShader("Resources/Shaders/PSFX/HighBlur", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER);
+		}
 		
 		if (didMove) {
 			camera.LookAtMouse(mouseSensitivity, input->GetMousePositionX(), input->GetMousePositionY(), input->GetOldMousePositionX(), input->GetOldMousePositionY());
@@ -539,11 +573,14 @@ int main() {
 
 
 
-
 		scene.Render(0, 0, windowWidth, windowHeight);
 
-
-
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui::NewFrame();
+		ImGui::Text("%.1f FPS", 1.0f / deltaTime);
+		ImGui::Text("%.3f ms", deltaTime * 1000.0f);
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
 

@@ -19,6 +19,9 @@
     <Filter Include="Graphics\Object">
       <UniqueIdentifier>{DC2B1DA7-48B7-8A6B-51C8-0D60BDD2E66B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics\Pipeline">
+      <UniqueIdentifier>{FBD334F8-67EA-328E-B061-BEAF1CB70316}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Graphics\Scene">
       <UniqueIdentifier>{B3383A89-9F06-2E8F-889A-9EB574070AF4}</UniqueIdentifier>
     </Filter>
@@ -93,6 +96,15 @@
     </ClInclude>
     <ClInclude Include="Source\Graphics\Object\Object.h">
       <Filter>Graphics\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Pipeline\DeferredPipeline.h">
+      <Filter>Graphics\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Pipeline\ForwardPipeline.h">
+      <Filter>Graphics\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Pipeline\Pipeline.h">
+      <Filter>Graphics\Pipeline</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Scene\Scene.h">
       <Filter>Graphics\Scene</Filter>
@@ -1027,6 +1039,15 @@
     </ClCompile>
     <ClCompile Include="Source\Graphics\Object\Object.cpp">
       <Filter>Graphics\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Pipeline\DeferredPipeline.cpp">
+      <Filter>Graphics\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Pipeline\ForwardPipeline.cpp">
+      <Filter>Graphics\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Pipeline\Pipeline.cpp">
+      <Filter>Graphics\Pipeline</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Scene\Scene.cpp">
       <Filter>Graphics\Scene</Filter>

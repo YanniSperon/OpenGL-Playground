@@ -2,7 +2,7 @@
 #include <algorithm>
 
 Scene::Scene()
-	: m_OpaqueObjects(), m_Lights(), m_Cameras(), m_ActiveCamera(0), m_ShouldUpdate(true)
+	: m_OpaqueObjects(), m_Lights(), m_Cameras(), m_ActiveCamera(0), m_ShouldUpdate(true), m_OpaquePipeline("Resources/Shaders/Deferred/PSFX/Basic", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, 1920, 1080), m_TransparentPipeline("Resources/Shaders/Forward/PSFX/Basic", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, 1920, 1080)
 {
 	m_Cameras.push_back(new Camera());
 }
@@ -21,6 +21,16 @@ Scene::~Scene()
 	for (std::size_t i = 0; i < m_Cameras.size(); ++i) {
 		delete m_Cameras[i];
 	}
+}
+
+DeferredPipeline& Scene::GetOpaquePipeline()
+{
+	return m_OpaquePipeline;
+}
+
+ForwardPipeline& Scene::GetTransparentPipeline()
+{
+	return m_TransparentPipeline;
 }
 
 void Scene::Update(float deltaTime)
@@ -504,8 +514,9 @@ void Scene::Render(int x, int y, int width, int height)
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::vec3 cameraPosition = camera.GetTranslation();
 
-	Skybox* skybox = camera.GetSkybox();
+	m_TransparentPipeline.Prepare(width, height);
 
+	Skybox* skybox = camera.GetSkybox();
 	GLuint lastID = 0;
 
 	for (std::size_t i = 0; i < m_OpaqueObjects.size(); ++i) {
@@ -583,4 +594,5 @@ void Scene::Render(int x, int y, int width, int height)
 			renderable->GetMesh().Draw();
 		}
 	}
+	m_TransparentPipeline.Flush();
 }

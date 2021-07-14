@@ -3,6 +3,9 @@
 #include "Light.h"
 #include "Camera.h"
 
+#include "ForwardPipeline.h"
+#include "DeferredPipeline.h"
+
 class Scene {
 private:
 	std::vector<Object*> m_OpaqueObjects;
@@ -13,9 +16,15 @@ private:
 	std::size_t m_ActiveCamera;
 
 	bool m_ShouldUpdate;
+
+	DeferredPipeline m_OpaquePipeline;
+	ForwardPipeline m_TransparentPipeline;
 public:
 	Scene();
 	~Scene();
+
+	DeferredPipeline& GetOpaquePipeline();
+	ForwardPipeline& GetTransparentPipeline();
 
 	void Update(float deltaTime);
 
