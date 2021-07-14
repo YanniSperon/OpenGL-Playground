@@ -28,7 +28,6 @@ project "OpenGL"
 	{
 		"Dependencies/GLEW",
 		"Dependencies/GLFW",
-		"Dependencies/ASSIMP/include",
 		"%{prj.name}/Source",
 		"%{prj.name}/Source/**"
 	}
@@ -37,16 +36,12 @@ project "OpenGL"
 	{
 		"Dependencies/GLEW",
 		"Dependencies/GLFW",
-		"Dependencies/ASSIMP/lib"
 	}
 	
 	links {
 		"glew32s.lib",
 		"glfw3.lib",
 		"opengl32.lib",
-		"zlibstaticd.lib",
-		"IrrXMLd.lib",
-		"assimpd.lib"
 	}
 	
 	cppdialect "C++17"
