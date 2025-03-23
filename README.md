@@ -19,3 +19,5 @@ Test environment for new OpenGL implementations, houses the current iteration of
 - [ ] OIT (Order independent  transparency)
 - [ ] Automatic LOD (Level of Detail) model loading and rendering
 - [ ] Assimp complex model support
+
+[Watch the video](https://github.com/YanniSperon/OpenGL-Playground/raw/refs/heads/master/Demo/andromedarendering.mp4)
