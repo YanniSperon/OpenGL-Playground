@@ -8,7 +8,7 @@
 #include "Vendor/glm/gtx/rotate_vector.hpp"
 
 Camera::Camera()
-	: m_NearPlane(0.1f), m_FarPlane(250.0f), m_MovementSpeed(5.0f), m_Translation(0.0f), m_IsFocused(false), m_Rotation(-270.0f, 0.0f, 0.0f), m_Skybox(nullptr)
+	: m_NearPlane(0.1f), m_FarPlane(250.0f), m_MovementSpeed(0.5f), m_Translation(0.0f), m_IsFocused(false), m_Rotation(-270.0f, 0.0f, 0.0f), m_Skybox(nullptr)
 {
 
 }

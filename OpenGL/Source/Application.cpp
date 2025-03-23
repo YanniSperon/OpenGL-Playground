@@ -41,7 +41,7 @@ static void GLAPIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint
 static double mouseXPos = 0.0;
 static double mouseYPos = 0.0;
 
-static double mouseSensitivity = 0.5;
+static double mouseSensitivity = 0.05;
 
 static int windowWidth = 1920;
 static int windowHeight = 1080;
@@ -447,34 +447,40 @@ int main() {
 	Scene scene;
 
 	Object* obj0 = new Object("Resources/MassivePlane.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Rust/Rust", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
-	obj0->SetTranslation(glm::vec3(0.0f, -3.0f, 0.0f));
-	obj0->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+	obj0->SetTranslation(glm::vec3(0.0f, 0.0f, 0.0f));
+	obj0->SetScale(glm::vec3(0.1f, 0.1f, 0.1f));
 	scene.AddOpaqueObject(obj0);
 
 	Object* obj1 = new Object("Resources/SmoothSphere.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Metal/Metal", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
-	obj1->SetTranslation(glm::vec3(3.0f, 0.0f, 0.0f));
+	obj1->SetTranslation(glm::vec3(0.0f, 1.0f, -1.0f));
 	obj1->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	scene.AddOpaqueObject(obj1);
 
 	Object* obj2 = new Object("Resources/SmoothSphere.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Shiny/Shiny", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
-	obj2->SetTranslation(glm::vec3(-3.0f, 0.0f, 0.0f));
+	obj2->SetTranslation(glm::vec3(-3.0f, 1.0f, 0.0f));
 	obj2->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	scene.AddOpaqueObject(obj2);
 
 	Object* obj3 = new Object("Resources/SmoothSphere.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Shiny/Shiny", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
-	obj3->SetTranslation(glm::vec3(0.0f, 0.0f, 0.0f));
+	obj3->SetTranslation(glm::vec3(3.0f, 1.0f, 0.0f));
 	obj3->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	scene.AddOpaqueObject(obj3);
+
+	Object* obj4 = new Object("Resources/LampFrame.obj", "Resources/Shaders/PBR", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/Metal/Metal", MATERIAL_ALBEDO_TEXTURE | MATERIAL_NORMAL_TEXTURE | MATERIAL_METALLIC_TEXTURE | MATERIAL_ROUGHNESS_TEXTURE | MATERIAL_AO_TEXTURE, false);
+	obj4->SetRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
+	obj4->SetTranslation(glm::vec3(0.0f, 0.0f, 0.0f));
+	obj4->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+	scene.AddOpaqueObject(obj4);
 
 	Light* l0 = new Light();
 	l0->SetColor(glm::vec3(300.0f, 300.0f, 300.0f));
 	l0->SetTranslation(glm::vec3(0.0f, 7.0f, 0.0f));
 	scene.AddLight(l0);
 
-	Light* l1 = new Light();
-	l1->SetColor(glm::vec3(300.0f, 300.0f, 300.0f));
-	l1->SetTranslation(glm::vec3(10.0f, 3.0f, 10.0f));
-	scene.AddLight(l1);
+	//Light* l1 = new Light();
+	//l1->SetColor(glm::vec3(300.0f, 300.0f, 300.0f));
+	//l1->SetTranslation(glm::vec3(10.0f, 3.0f, 10.0f));
+	//scene.AddLight(l1);
 
 	// light objects
 	//objects.push_back(new Object("Resources/SmoothSphere.obj", "Resources/Shaders/Basic", SHADER_VERTEX_SHADER | SHADER_FRAGMENT_SHADER, "Resources/White/White", MATERIAL_ALBEDO_TEXTURE, false));
@@ -486,12 +492,12 @@ int main() {
 	//objects[5]->SetScale(glm::vec3(0.1f, 0.1f, 0.1f));
 
 	Camera& camera = *scene.GetActiveCamera();
-	camera.SetTranslation(glm::vec3(0.0f, 0.0f, -3.0f));
+	camera.SetTranslation(glm::vec3(0.0f, 2.0f, -3.0f));
 	camera.SetSkybox("Resources/Skybox/Canyon.hdr");
 	camera.GetSkybox()->SetGamma(1.6f);
 
 
-
+	double currAnimTime = 0.0;
 	double timeConstant = 1.0;
 	auto lastTime = std::chrono::high_resolution_clock::now();
 	auto currentTime = lastTime;
@@ -541,9 +547,8 @@ int main() {
 		}
 
 
-
-
-
+		obj3->SetTranslation(glm::vec3(3.0f, 2.0f + glm::sin(glm::radians(100.0f * currAnimTime)), 0.0f));
+		currAnimTime += deltaTime;
 
 
 		scene.Render(0, 0, windowWidth, windowHeight);
