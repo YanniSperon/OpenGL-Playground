@@ -20,4 +20,6 @@ Test environment for new OpenGL implementations, houses the current iteration of
 - [ ] Automatic LOD (Level of Detail) model loading and rendering
 - [ ] Assimp complex model support
 
+[Icon](https://github.com/YanniSperon/OpenGL-Playground/blob/cfd05de03fdc07cde120421021fc6916d6699056/Demo/andromeda.png?raw=true)
+
 [Watch the video](https://github.com/YanniSperon/OpenGL-Playground/raw/refs/heads/master/Demo/andromedarendering.mp4)
